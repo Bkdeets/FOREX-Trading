@@ -1,15 +1,91 @@
 ## Author: Britton K. Deets
 ## Created: July 14th , 2018
-## Version: 1
+
+from Strategies import *
+import CollectData
+import json
 
 
-# change made
+def long(specs, index):
+    exe_price = rel_data[index]
+    state = "L"
+    result = [exe_price, state]
+    return result
 
-def backtest(function, dataset):
-    return None
+def short(specs, index):
+    exe_price = rel_data[index]
+    state = "S"
+    result = [exe_price, state]
+    return result
+
+def exit_l(specs, index):
+    exe_price = rel_data[index]
+    state = None
+    result = [exe_price, state]
+    return result
+
+def exit_s(specs, index):
+    exe_price = rel_data[index]
+    state = None
+    result = [exe_price, state]
+    return result
 
 
-def add(x,y):
-    print(x+y)
 
-add(9,10)
+indictation_dict = {
+    "L": long,
+    "S": short,
+    "EL": exit_l,
+    "ES": exit_s
+}
+
+
+
+def trade(specs, indication, index, balances, state):
+    balance = balances[-1]
+    action = indictation_dict[indication]
+    trade_data = action(specs, index)
+
+    trade_data.append(balance)
+
+    # [exe_price, state, balance]
+    return trade_data
+
+
+# Will always backtest on the largest period given by the granularity and period specified in strategy datareq
+def backtest(strategy, granularity, instrument, count):
+
+
+    # Initializing variables
+    state = None
+    balance = 1000
+    balances = [balance]
+    trades = []
+    studies = []
+    specs = json.load(strategy.tradespecs)
+
+    # Setting rel_data to global so trade functions can access it without creating new list each time
+    global rel_data
+    rel_data = CollectData.getData(specs['supportINTD'], granularity, instrument)
+
+    # Starting backtest
+    for index,datapoint in enumerate(rel_data):
+
+        # Indication can be anything in indication dict or None (False)
+        indication,study = strategy.main(datapoint)
+
+        if indication:
+            studies.append(study)
+            trade_res = trade(specs, indication, index, balances, state)
+            balance = trade_res[0]
+            balances.append(balance)
+            trades.append(trade_res)
+
+
+        else:
+            studies.append(study)
+
+
+    # Write file with all relevant results
+    # Return nothing
+
