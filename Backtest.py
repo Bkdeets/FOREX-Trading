@@ -42,8 +42,11 @@ indictation_dict = {
 
 
 def trade(specs, indication, index, balances, state):
+
+
     balance = balances[-1]
     action = indictation_dict[indication]
+
     trade_data = action(specs, index)
 
     trade_data.append(balance)
@@ -53,7 +56,7 @@ def trade(specs, indication, index, balances, state):
 
 
 # Will always backtest on the largest period given by the granularity and period specified in strategy datareq
-def backtest(strategy, granularity, instrument, count):
+def backtest(strategy, granularity, instrument, strat_args):
 
 
     # Initializing variables
@@ -72,12 +75,13 @@ def backtest(strategy, granularity, instrument, count):
     for index,datapoint in enumerate(rel_data):
 
         # Indication can be anything in indication dict or None (False)
-        indication,study = strategy.main(datapoint)
+        indication,study = strategy.main(rel_data, state, strat_args)
 
         if indication:
             studies.append(study)
             trade_res = trade(specs, indication, index, balances, state)
-            balance = trade_res[0]
+            balance = trade_res[-1]
+            state = trade_res[1]
             balances.append(balance)
             trades.append(trade_res)
 
