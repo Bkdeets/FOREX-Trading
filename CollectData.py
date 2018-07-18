@@ -40,23 +40,27 @@ def createQueryT(fromTime,toTime,granularity):
 
 def getData(suppINTD, granularity, instrument, count=5000):
 
-    with open("accountdetails") as file:
+    with open("acctdetails") as file:
         acctdet = json.load(file)
 
     if suppINTD:
         toTime = datetime.datetime.utcnow()
         toTime = toTime.replace(hour=0,minute=0,second=0,microsecond=0)
 
-        fromTime = toTime - datetime.timedelta(days=gran_times[granularity])
+        try:
+            fromTime = toTime - datetime.timedelta(days=gran_times[granularity])
 
-        fromTime = str(fromTime.isoformat("T")) + "Z"
-        toTime = str(toTime.isoformat("T")) + "Z"
-        query = createQueryT(fromTime, toTime, granularity)
+            fromTime = str(fromTime.isoformat("T")) + "Z"
+            toTime = str(toTime.isoformat("T")) + "Z"
+            query = createQueryT(fromTime, toTime, granularity)
+        except:
+            query = createQueryC(count, granularity)
 
     else:
         query = createQueryC(count, granularity)
 
-    url = acctdet['baseURL'] + "instruments/" + instrument + "/candles"
+    base = acctdet['baseURL']
+    url = "".join([base,"instruments/", instrument, "/candles"])
     headers = acctdet['headers']
     candleData = requests.get(url, headers=headers, params=query)
     parsedData = json.loads(json.dumps(candleData.json()))

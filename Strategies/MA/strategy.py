@@ -10,12 +10,13 @@ It would be cool to make a maching learning version where learned the patterns a
 '''
 
 import math
-import genSMA
+from Strategies.MA import genSMA
+
 
 
 
 def checkEntry(sma, datapoint, distance):
-    close = float(datapoint['c'])
+    close = float(datapoint['mid']['c'])
     actual_dist = (sma-close)/close
     if abs(actual_dist)-distance >= 0:
         if actual_dist < 0:
@@ -29,18 +30,18 @@ def checkEntry(sma, datapoint, distance):
 
 def checkExit(sma, datapoint, state):
 
-    close = float(datapoint['c'])
+    close = float(datapoint['mid']['c'])
     actual_distance = sma - close
     if state == "L":
         if actual_distance >= 0:
             return "EL"
         else:
-            return "L"
+            return None
     elif state == "S":
         if actual_distance <= 0:
             return "ES"
         else:
-            return "S"
+            return None
 
 
 
@@ -55,11 +56,14 @@ def nextIndication(sma, state, datapoint, distance):
 
 def main(datapoints, state, strat_args):
 
-    period = strat_args['period']
     distance = strat_args['distance']
 
-    sma = genSMA.main(datapoints, period)
+    sma = genSMA.main(datapoints)
 
     indication = nextIndication(sma, state, datapoints[-1], distance)
 
     return indication, sma
+
+tradespecs = {
+        "supportINTD": "True",
+}
