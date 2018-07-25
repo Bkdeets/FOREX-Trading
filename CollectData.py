@@ -6,7 +6,6 @@ import requests
 import datetime
 
 
-
 gran_times = {
     "M1":5000//1440,
     "M4":5000//360,
@@ -64,6 +63,7 @@ def getData(suppINTD, granularity, instrument, count=5000):
     headers = acctdet['headers']
     candleData = requests.get(url, headers=headers, params=query)
     parsedData = json.loads(json.dumps(candleData.json()))
+
     return parsedData
 
 

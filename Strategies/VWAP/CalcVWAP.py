@@ -274,7 +274,8 @@ def backtest():
                     for c in candles:
                         #print(c['mid']['c'])
                         closes.append(float(c['mid']['c']))
-                    #plotter2(vWp,closes,instrument,"M1",level)
+                    print(V_with_price)
+                    plotter2(V_with_price,closes,instrument)
                     monthGain.append((results,level))
 
             except Exception as e:
@@ -303,6 +304,6 @@ def backtest():
 
 #backtest(str(datetime.datetime.utcnow().isoformat("T")) + "Z")
 # end = datetime.datetime.utcnow() - datetime.timedelta(days=1)
-#backtest()
+backtest()
 
 #print(getBestLevels("EUR_USD"))

@@ -3,12 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5c3c3545-d953-47fe-8f26-e969a594bf6d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backtest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backtest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CollectData.py" beforeDir="false" afterPath="$PROJECT_DIR$/CollectData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Strategies/MA/genSMA.py" beforeDir="false" afterPath="$PROJECT_DIR$/Strategies/MA/genSMA.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Strategies/MA/strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/Strategies/MA/strategy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Strategies/MA/tradespecs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/acctdetails" beforeDir="false" afterPath="$PROJECT_DIR$/acctdetails" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,8 +16,8 @@
       <file leaf-file-name="Backtest.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Backtest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="130" column="21" lean-forward="true" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
+            <state relative-caret-position="15">
+              <caret line="130" column="21" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
               <folding>
                 <element signature="e#58#82#0" expanded="true" />
               </folding>
@@ -39,7 +33,7 @@
       <file leaf-file-name="strategy.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Strategies/MA/strategy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
+            <state relative-caret-position="855">
               <caret line="58" selection-start-line="58" selection-end-line="58" />
               <folding>
                 <element signature="e#404#415#0" expanded="true" />
@@ -69,7 +63,7 @@
       <file leaf-file-name="CollectData.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CollectData.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
+            <state relative-caret-position="960">
               <caret line="66" selection-start-line="66" selection-end-line="66" />
               <folding>
                 <element signature="e#58#69#0" expanded="true" />
@@ -108,7 +102,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="width" value="1280" />
     <option name="height" value="800" />
   </component>
@@ -239,30 +233,36 @@
       <option name="project" value="LOCAL" />
       <updated>1531696263477</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Ran a whole lot of tests on the strategy to determine the best levels to trade at. It seems that including the 2 pip (.0002) penalty on entries and exits made trading under the 1 hour time frame unrealistic. This will definitely be helpful in determining feasible strategies moving forward. I should probably be looking for trades that are going to capitalize on moves that are a majority of the day to a few days long.">
+      <created>1531956093642</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1531956093642</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1280" height="777" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15806195" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32965517" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32965517" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31034482" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32965517" />
       <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31034482" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32965517" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32965517" />
     </layout>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -309,7 +309,8 @@
     <MESSAGE value="Committing accound details in JSON format in order to have easier API access" />
     <MESSAGE value="Did a whole lot today. Still writing the structure for backtesting and how backtesting should interact with the strategy and where certain trade specs should lie." />
     <MESSAGE value="Finished up my test strategy. Going to run a whole bunch of tests now to see what bugs I coded and where!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished up my test strategy. Going to run a whole bunch of tests now to see what bugs I coded and where!" />
+    <MESSAGE value="Ran a whole lot of tests on the strategy to determine the best levels to trade at. It seems that including the 2 pip (.0002) penalty on entries and exits made trading under the 1 hour time frame unrealistic. This will definitely be helpful in determining feasible strategies moving forward. I should probably be looking for trades that are going to capitalize on moves that are a majority of the day to a few days long." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ran a whole lot of tests on the strategy to determine the best levels to trade at. It seems that including the 2 pip (.0002) penalty on entries and exits made trading under the 1 hour time frame unrealistic. This will definitely be helpful in determining feasible strategies moving forward. I should probably be looking for trades that are going to capitalize on moves that are a majority of the day to a few days long." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -326,6 +327,53 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Backtest.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1950">
+          <caret line="130" column="21" lean-forward="true" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
+          <folding>
+            <element signature="e#58#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/output.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Strategies/MA/strategy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+          <folding>
+            <element signature="e#404#415#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Strategies/MA/genSMA.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/acctdetails">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="47" selection-start-line="3" selection-start-column="47" selection-end-line="3" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CollectData.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="960">
+          <caret line="66" selection-start-line="66" selection-end-line="66" />
+          <folding>
+            <element signature="e#58#69#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Backtest.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1110">
           <caret line="76" column="22" lean-forward="true" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
           <folding>
@@ -334,13 +382,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Strategies/MA/tradespecs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="1" lean-forward="true" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Strategies/MA/tradespecs" />
     <entry file="file://$PROJECT_DIR$/acctdetails">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -383,9 +425,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Strategies/MA/datareq" />
-    <entry file="file://$PROJECT_DIR$/Strategies/MA/tradespecs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Strategies/MA/tradespecs" />
     <entry file="file://$PROJECT_DIR$/acctdetails">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -433,7 +473,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/CollectData.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
+        <state relative-caret-position="960">
           <caret line="66" selection-start-line="66" selection-end-line="66" />
           <folding>
             <element signature="e#58#69#0" expanded="true" />
@@ -450,7 +490,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Strategies/MA/strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
+        <state relative-caret-position="855">
           <caret line="58" selection-start-line="58" selection-end-line="58" />
           <folding>
             <element signature="e#404#415#0" expanded="true" />
@@ -463,8 +503,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Backtest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="130" column="21" lean-forward="true" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
+        <state relative-caret-position="15">
+          <caret line="130" column="21" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
           <folding>
             <element signature="e#58#82#0" expanded="true" />
           </folding>
