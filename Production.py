@@ -13,7 +13,7 @@ class Production:
     strategy = None
     strat_args = {}
     granularity = "D" #default
-    allocation = 30  #percentage
+    allocation = .30  #percentage
     lookbackData = []
     pair = ""
     state = ""

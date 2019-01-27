@@ -2,6 +2,7 @@
 ## Created: July 14th , 2018
 
 import CollectData
+import Trade
 import matplotlib.pyplot as plt
 import pprint
 
@@ -16,16 +17,17 @@ class Backtest:
     strat_args = "undef"
 
     #Initialized after startBacktest
-    state = None
     results = []
     relevantData = []
+    relDataChunk = []
     studies = []
     trades = []
-    entryPrice = 0
+    currTrade = None
 
-
-    #Static Variables
+    #Constant Variables
     SPREAD = .0002 # Need to make a dynamic value --- I think you can get spread data from the API
+    EXIT_LONG = "exitLong"
+    EXIT_SHORT = "exitShort"
 
 
 
@@ -33,35 +35,25 @@ class Backtest:
         self.balance = balance
         self.granularity = granularity
         self.strategy = strategy
-        self.strat_args = strat_args;
-
-        specs = strategy.tradespecs
-        self.relevantData = CollectData.getData(specs['supportINTD'], granularity, currency)
-        self.relevantData = self.relevantData['candles']
+        self.strat_args = strat_args
+        self.relevantData = CollectData.getData(strategy.tradespecs['supportINTD'], granularity, currency)['candles']
 
 
     def enterLong(self,index):
-        exePrice = float(self.relevantData[index]['mid']['c']) + Backtest.SPREAD
-        self.state = "inLong"
-        return [exePrice,self.state]
+        self.currTrade.entryProcedures(index, float(self.relevantData[index]['mid']['c']) + Backtest.SPREAD, True)
 
 
     def enterShort(self,index):
-        exePrice = float(self.relevantData[index]['mid']['c']) - Backtest.SPREAD
-        self.state = "inShort"
-        return [exePrice,self.state]
+        self.currTrade.entryProcedures(index, float(self.relevantData[index]['mid']['c']) - Backtest.SPREAD, False)
 
 
     def exitLong(self,index):
-        exePrice = float(self.relevantData[index]['mid']['c']) - Backtest.SPREAD
-        self.state = None
-        return [exePrice,self.state]
+        self.currTrade.exitProcedures(index, float(self.relevantData[index]['mid']['c']) - Backtest.SPREAD)
 
 
     def exitShort(self,index):
-        exePrice = float(self.relevantData[index]['mid']['c']) + Backtest.SPREAD
-        self.state = None
-        return [exePrice,self.state]
+        self.currTrade.exitProcedures(index, float(self.relevantData[index]['mid']['c']) + Backtest.SPREAD)
+
 
     indictation_dict = {
         "enterLong": enterLong,
@@ -70,125 +62,74 @@ class Backtest:
         "exitShort": exitShort
     }
 
-    def getDataChunk(self, index, period):
-        # Pulling the correct data to feed to the strategy
-        # Pulls candle by candle until the length of the period
+    def setDataChunk(self, index, period):
         if index >= period:
-            relDataChunk = self.relevantData[index - period: index]
+            self.relDataChunk = self.relevantData[index - period: index]
         elif index == 0:
-            relDataChunk = [self.relevantData[0]]
+            self.relDataChunk = [self.relevantData[0]]
         else:
-            relDataChunk = self.relevantData[0:index]
-
-        return relDataChunk
+            self.relDataChunk = self.relevantData[0:index]
 
 
-
-    def checkStopAndProfit(self, relDataChunk):
-
-        pct_change = (float(relDataChunk[0]['mid']['c']) - self.entryPrice)/self.entryPrice
-        if strat_args['profitDistance'] != False:
+    def hitStopLevel(self,index):
+        pct_change = (float(self.relevantData[index]['mid']['c']) - self.currTrade.getEntryPrice())/self.currTrade.getEntryPrice()
+        if strat_args['profitDistance']:
             if pct_change > strat_args['profitDistance']:
                 return True
-        elif strat_args['stopDistance'] != False:
+        elif strat_args['stopDistance']:
             if abs(pct_change) > strat_args['stopDistance']:
                 return True
         return False
 
 
+    def changeBalance(self, indication):
+        if indication == "exitLong":
+            self.balance = (1 + self.currTrade.getPctChange()) * self.balance
+        else:
+            self.balance = (1 - self.currTrade.getPctChange()) * self.balance
+
 
     def trade(self,indication, index):
         action = Backtest.indictation_dict[indication]
 
-        trade_data = []
-        pct_chg = 0
-
-        if indication.startswith("exit") and self.state != None:
-            trade_data = action(self,index)
-            executionPrice = trade_data[0]
-
-            pct_chg = (executionPrice - self.entryPrice) / self.entryPrice
-            if indication == "exitLong":
-                self.balance = (1+pct_chg) * self.balance
-            else:
-                pct_chg = -pct_chg
-                self.balance = (1+pct_chg) * self.balance
-
-            trade_data.append(pct_chg)
-            trade_data.append(self.balance)
+        if indication.startswith("exit"):
+            action(self,index)
+            self.changeBalance(indication)
+            self.trades.append(self.currTrade)
+            self.balances.append(self.balance)
 
         elif indication.startswith("enter"):
-            trade_data = action(self, index)
-            executionPrice = trade_data[0]
-            self.entryPrice = executionPrice
-
-            trade_data.append(pct_chg)
-            trade_data.append(self.balance)
+            action(self, index)
 
 
-
-        # [exe_price, state, change, balance]
-        return trade_data
-
-
-    # Will always backtest on the largest time period given by the granularity and period specified in strategy datareq
     def startBacktest(self):
-
-        # Initializing variables
-        entryPrice = float(self.relevantData[0]['mid']['o'])
-        specs = self.strategy.tradespecs
-        period = self.strat_args['period']
-        trade_data = []
-
-        # Starting backtest
         for index, datapoint in enumerate(self.relevantData):
-
-            relDataChunk = self.getDataChunk(index,period)
-
-            # Indication can be anything in indication dict or None (False)
-            # Get indication and study values from strategy
-            indication, study = self.strategy.main(relDataChunk, self.state, self.strat_args)
+            self.setDataChunk(index,self.strat_args['period'])
+            if self.currTrade:
+                indication, study = self.strategy.main(self.relDataChunk, self.currTrade.getIsOpen(), self.currTrade.getIsLong(), self.strat_args)
+            else:
+                indication, study = self.strategy.main(self.relDataChunk, False, None, self.strat_args)
 
             if indication:
+                if indication.startswith("enter"):
+                    self.studies.append(study)
+                    self.currTrade = Trade.Trade(index)
+                    self.trade(indication, index)
+                else:
+                    self.studies.append(study)
+                    self.trade(indication, index)
+
+            elif self.currTrade:
                 self.studies.append(study)
 
-                #Make the trade
-                trade_data = self.trade(indication, index)
-
-                # Updating important price data
-                self.entryPrice = trade_data[0]
-
-                #Update balances list
-                self.balances.append(self.balance)
-
-                #Add the index to trade data
-                trade_data.append(index)
-
-                # Append trade data to trades list
-                self.trades.append(trade_data)
+                if self.currTrade.getIsOpen() and self.hitStopLevel(index):
+                    if self.currTrade.getIsLong():
+                        self.trade(self.EXIT_LONG,index)
+                    else:
+                        self.trade(self.EXIT_SHORT, index)
 
             else:
                 self.studies.append(study)
-
-                if self.state != None:
-                    indication = self.checkStopAndProfit(relDataChunk)
-                    if indication:
-                        if self.state == "inLong":
-                            trade_data = self.trade("exitLong",index)
-                        elif self.state == "inShort":
-                            trade_data = self.trade("exitShort", index)
-
-                        # Updating important price data
-                        self.entryPrice = trade_data[0]
-
-                        # Update balances list
-                        self.balances.append(self.balance)
-
-                        # Add the index to trade data
-                        trade_data.append(index)
-
-                        # Append trade data to trades list
-                        self.trades.append(trade_data)
 
 
 
@@ -196,8 +137,8 @@ class Backtest:
 balance = 1000
 strat_args = {
     'period': 50,
-    'distance': .01,
-    'stopDistance': .01,
+    'distance': .05,
+    'stopDistance': False,
     'profitDistance': False
 }
 currency = "GBP_USD"
@@ -217,15 +158,17 @@ close_prices = [float(candle['mid']['c']) for candle in backtest.relevantData]
 plt.plot(close_prices)
 plt.plot(backtest.studies)
 
+for tradeObj in tradeData:
+    output = tradeObj.toList()
+    if tradeObj.getIsLong():
+        plt.plot(tradeObj.getStartIndex(), tradeObj.getEntryPrice(), "g+")
+        plt.plot(tradeObj.getEndIndex(), tradeObj.getExitPrice(), "rx")
+    else:
+        plt.plot(tradeObj.getStartIndex(), tradeObj.getEntryPrice(), "b+")
+        plt.plot(tradeObj.getEndIndex(), tradeObj.getExitPrice(), "rx")
+
 for td in tradeData:
-    if td[1] == "inLong":
-        plt.plot(td[-1],td[0], "g+")
-    elif td[1] == "inShort":
-        plt.plot(td[-1], td[0], "rx")
-    elif td[1] == None:
-        plt.plot(td[-1], td[0], "bo")
-for td in tradeData:
-    print(td)
+    print(td.toList())
 
 plt.show()
 

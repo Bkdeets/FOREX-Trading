@@ -15,43 +15,37 @@ from Strategies.MA import genSMA
 
 def checkEntry(sma, datapoint, distance):
     close = float(datapoint['mid']['c'])
-    actual_dist = (sma-close)/close
+    actual_dist = (sma-close)/min(close,sma)
     if abs(actual_dist)-distance >= 0:
         if actual_dist > 0:
             return "enterLong"
         else:
             return "enterShort"
-
     return None
 
 
-def checkExit(sma, datapoint, state):
+def checkExit(sma, datapoint, inLong):
     close = float(datapoint['mid']['c'])
     actual_distance = sma - close
-    if state == "inLong":
-        if actual_distance <= 0:
-            return "exitLong"
-        else:
-            return None
-    elif state == "inShort":
-        if actual_distance >= 0:
-            return "exitShort"
-        else:
-            return None
+    if inLong and actual_distance <= 0:
+        return "exitLong"
+    elif not inLong and actual_distance >= 0:
+        return "exitShort"
+    else:
+        return None
 
 
-def nextIndication(sma, state, datapoint, distance):
-    if state:
-        indication = checkExit(sma, datapoint, state)
+def nextIndication(sma, isOpen, inLong, datapoint, distance):
+    if isOpen:
+        indication = checkExit(sma, datapoint, inLong)
     else:
         indication = checkEntry(sma, datapoint, distance)
     return indication
 
 
-def main(datapoints, state, strat_args):
-    distance = strat_args['distance']
+def main(datapoints, isOpen, inLong, strat_args):
     sma = genSMA.main(datapoints)
-    indication = nextIndication(sma, state, datapoints[-1], distance)
+    indication = nextIndication(sma, isOpen, inLong, datapoints[-1], strat_args['distance'])
     return indication, sma
 
 tradespecs = {
